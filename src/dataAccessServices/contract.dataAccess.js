@@ -20,8 +20,21 @@ const getAll = async (filters = {}) => {
     return contracts;
 };
 
-const getById = async (id) => {
-    const contract = await Contract.findOne({ where: { id } });
+const getById = async (id, filters = {}) => {
+
+    let filtersToApply = {};
+    if (!isEmptyObject(filters)) {
+        const { ContractorId, ClientId } = filters;
+        filtersToApply = {
+            id,
+            [Op.or]: {
+                ContractorId,
+                ClientId
+            }
+        };
+    }
+
+    const contract = await Contract.findOne({ where: { ...removeUndefinedProps(filtersToApply) } });
     return contract;
 };
 

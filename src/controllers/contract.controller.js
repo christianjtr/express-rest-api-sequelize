@@ -37,9 +37,10 @@ const getAllContracts = async (req, res, next) => {
 const getContractById = async (req, res, next) => {
     
     const { id } = req.safeFields;
+    const { profile } = req;
 
     try {
-        const contract = await contractService.getContractById(id);
+        const contract = await contractService.getContractById(id, { profile });
         if(!contract) res.status(404).end();
         res.status(200).send({ data: contract });
     } catch (error) {

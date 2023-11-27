@@ -12,8 +12,14 @@ const getAllContracts = async (payload = {}) => {
     return contracts;
 };
 
-const getContractById = async (id) => {
-    const contract = await contractDataAccessService.getById(id);
+const getContractById = async (id, payload = {}) => {
+
+    const { profile } = payload;
+
+    const contract = await contractDataAccessService.getById(id, {
+        ContractorId: profile.id,
+        ClientId: profile.id
+    });
     return contract;
 };
 
