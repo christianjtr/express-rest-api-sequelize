@@ -22,26 +22,6 @@ const isValidJobId = async (req, res, next) => {
     }
 };
 
-const validatePaymentPayload = async (req, res, next) => {
-    try {
-        
-        const queryObject = Joi.object({
-            amountToPay: Joi.number().min(0).required(),
-        });
-
-        const { amountToPay } = await queryObject.validateAsync(req.body);
-
-        req.safeFields = {
-            ...(req.safeFields || {}),
-            amountToPay,
-        };
-        next();
-    } catch (error) {
-        next(error);
-        
-    }
-};
-
 const getUnpaidJobs = async (req, res, next) => {
     
     const { profile } = req;
@@ -74,7 +54,6 @@ const launchJobPaymentById = async (req, res, next) => {
 
 module.exports = {
     isValidJobId,
-    validatePaymentPayload,
     getUnpaidJobs,
     launchJobPaymentById
 };
