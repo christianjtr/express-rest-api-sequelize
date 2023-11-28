@@ -8,7 +8,7 @@ const validateQueryParams = async (req, res, next) => {
         const queryObject = Joi.object({
             start: Joi.date().iso().optional(),
             end: Joi.date().iso().min(Joi.ref('start')).optional(),
-            limit: Joi.number().integer().optional()
+            limit: Joi.number().integer().min(-1).optional()
         });
 
         const { start, end, limit } = await queryObject.validateAsync(req.query);

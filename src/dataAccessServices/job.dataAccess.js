@@ -64,7 +64,7 @@ const getAggregationOfJobsPricesByCriteria = async (filters, groupBy, limit = 2)
             'id',
             'ContractId',
             'paid',
-            [fn('SUM', col('price')), 'total_paid'],
+            [fn('SUM', col('price')), 'totalPaid'],
         ],
         group: groupBy,
         where: { 
@@ -75,7 +75,7 @@ const getAggregationOfJobsPricesByCriteria = async (filters, groupBy, limit = 2)
             model: Contract,
             attributes: ['ClientId'],
         },
-        order: [['total_paid', 'DESC']],
+        order: [['totalPaid', 'DESC']],
         limit
     });
     return jobs;
