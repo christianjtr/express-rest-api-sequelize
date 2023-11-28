@@ -1,4 +1,3 @@
-const paymentService = require('./payment.service');
 const jobDataAccessService = require('../dataAccessServices/job.dataAccess');
 
 const updateJobById = async (jobId, payload) => {
@@ -41,15 +40,14 @@ const performJobPaymentById = async (jobId, profile, amountToPay) => {
             throw Error(`Payment Issue: Sorry, You do not have enough funds to pay the job ${jobId}`);
         }
 
-        await paymentService.processJobPayment({ 
-            ClientId: Contract.ClientId, 
-            ContractorId: Contract.ContractorId, 
-            amountToPay 
-        });
-        
-        const hasUpdatedJob = await updateJobById(jobId, { paid: true, paymentDate: new Date() });
+        if(amountToPay > jobPrice) {
+            throw Error(`Payment Issue: Sorry, You are triying pay more than the expected amount for the job ${jobId}`);
+        }
 
-        return hasUpdatedJob;
+        return {
+            isAllowedToProcessPayment: !isPaidJob && amountToPay === jobPrice,
+            contract: Contract
+        };
     }
     catch(error) {
         console.error(`performJobPaymentById: Can not process the payment of ${amountToPay} for job ${jobId}`);
@@ -58,6 +56,7 @@ const performJobPaymentById = async (jobId, profile, amountToPay) => {
 };
 
 module.exports = {
+    updateJobById,
     getUnpaidJobs,
     performJobPaymentById,
 };

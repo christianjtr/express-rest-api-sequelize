@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi');
 
+const paymentService = require('../services/payment.service');
 const jobService = require('../services/job.service');
 
 const isValidJobId = async (req, res, next) => {
@@ -41,11 +42,18 @@ const performJobPaymentById = async (req, res, next) => {
     const { profile } = req;
     
     try {
-        const hasPaidJob = await jobService.performJobPaymentById(jobId, profile, amountToPay);
-        if(!hasPaidJob) {
-            res.status(404).end();
+        const { isAllowedToProcessPayment, contract } = await jobService.performJobPaymentById(jobId, profile, amountToPay);
+        if(isAllowedToProcessPayment) {
+            await paymentService.processJobPayment({ 
+                ClientId: contract.ClientId, 
+                ContractorId: contract.ContractorId, 
+                amountToPay 
+            });
+
+            const hasUpdatedJob = await jobService.updateJobById(jobId, { paid: true, paymentDate: new Date() });
+            if(hasUpdatedJob) res.status(204).end();
         } else {
-            res.status(204).end();
+            res.status(404).end();
         }
     } catch(error) {
         next(error);

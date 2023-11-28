@@ -24,7 +24,7 @@ const isValidUserId = async (req, res, next) => {
 
 const checkIsClientUser = async (req, res, next) => {
     const { profile } = req;
-    const { clientId } = req.safeFields;
+    const { clientId } = req?.safeFields || {};
 
     let userProfile = profile;
 
