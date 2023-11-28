@@ -55,8 +55,35 @@ const updateJobById = async (jobId, payload, options = {}) => {
     return updatedJob;
 };
 
+const getAggregationOfJobsPricesByCriteria = async (filters, groupBy, limit = 2) => {
+    
+    const { startDate, endDate, ...otherFilters } = filters;
+
+    const jobs = await Job.findAll({
+        attributes: [
+            'id',
+            'ContractId',
+            'paid',
+            [fn('SUM', col('price')), 'total_paid'],
+        ],
+        group: groupBy,
+        where: { 
+            ...(startDate && endDate && { paymentDate: { [Op.between]: [startDate, endDate] } }),
+            ...otherFilters
+        },
+        include: {
+            model: Contract,
+            attributes: ['ClientId'],
+        },
+        order: [['total_paid', 'DESC']],
+        limit
+    });
+    return jobs;
+};
+
 module.exports = {
     getFiltered,
     getJobById,
-    updateJobById
+    updateJobById,
+    getAggregationOfJobsPricesByCriteria
 };
