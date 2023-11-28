@@ -36,8 +36,9 @@ const processClientDeposit = async (profile, amountToDeposit) => {
 
         const { balance: currentBalance } = await profileDataAccessService.getById(profile.id);
 
-        await profileDataAccessService.updateById(profile.id, { balance: currentBalance + amountToDeposit });
-        return 1;
+        const updatedProfile = await profileDataAccessService.updateById(profile.id, { balance: currentBalance + amountToDeposit });
+        
+        return updatedProfile;
     } catch(error) {
         console.error(`processClientDeposit: Can not process the deposit of ${amountToDeposit} for client ${profile.id}`);
         throw error;

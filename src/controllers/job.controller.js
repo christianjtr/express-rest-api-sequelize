@@ -45,7 +45,7 @@ const performJobPaymentById = async (req, res, next) => {
         if(!hasPaidJob) {
             res.status(404).end();
         } else {
-            res.status(200).send();
+            res.status(204).end();
         }
     } catch(error) {
         next(error);

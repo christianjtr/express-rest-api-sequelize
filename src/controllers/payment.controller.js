@@ -49,8 +49,11 @@ const performClientDeposit = (req, res, next) => {
         const { profile } = req;
         const { amountToDeposit } = req.safeFields;
         const hasSusccededDeposit = paymentService.processClientDeposit(profile, amountToDeposit);
-
-        res.status(200).send({ data: hasSusccededDeposit });
+        if(!hasSusccededDeposit) {
+            res.status(404).end();
+        } else {
+            res.status(204).end();
+        }
     } catch(error) {
         next(error);
     }
