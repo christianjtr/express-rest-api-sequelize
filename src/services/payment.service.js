@@ -20,10 +20,13 @@ const processJobPayment = async (payload) => {
         console.error('processJobPayment: Can not process the payment');
         throw error;
     }
+};
 
-    
+const processDeposit = (userId, amountToDeposit) => {
+    return 1;
 };
 
 module.exports = {
-    processJobPayment
+    processJobPayment,
+    processDeposit
 };
