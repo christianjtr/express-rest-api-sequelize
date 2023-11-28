@@ -8,6 +8,6 @@ router.post('/deposit/:userId',
     profileController.isValidUserId,
     profileController.checkIsClientUser,
     paymentController.validateDepositPayload,
-    paymentController.launchDeposit);
+    paymentController.performClientDeposit);
 
 module.exports = router;

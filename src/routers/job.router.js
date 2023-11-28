@@ -13,6 +13,6 @@ router.post('/:job_id/pay',
     profileController.checkIsClientUser, 
     jobController.isValidJobId,
     paymentController.validatePaymentPayload, 
-    jobController.launchJobPaymentById);
+    jobController.performJobPaymentById);
 
 module.exports = router;

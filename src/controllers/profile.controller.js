@@ -13,7 +13,7 @@ const isValidUserId = async (req, res, next) => {
 
         req.safeFields = {
             ...(req.safeFields || {}),
-            userId
+            clientId: userId
         };
         next();
     } catch (error) {
@@ -24,19 +24,22 @@ const isValidUserId = async (req, res, next) => {
 
 const checkIsClientUser = async (req, res, next) => {
     const { profile } = req;
-    const { userId } = req.safeFields;
+    const { clientId } = req.safeFields;
 
     let userProfile = profile;
 
-    if(!userProfile && userId) {
-        const requestedUserProfile = await profileService.getUserProfileById(userId);
+    if(!userProfile && clientId) {
+        const requestedUserProfile = await profileService.getUserProfileById(clientId);
         userProfile = requestedUserProfile;
     }
 
     const isClientUser = userProfile.type === 'client';
-    if(isClientUser) next();
+    if(isClientUser) {
+        req.profile = userProfile;
+        next();
+    }
     else {
-        next(new Error('checkIsClientUser : Only users with role client can perform a payment'));
+        next(new Error('checkIsClientUser : Only users with role client can perform a payment/deposit operation'));
     }
 };
 

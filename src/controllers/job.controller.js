@@ -35,13 +35,13 @@ const getUnpaidJobs = async (req, res, next) => {
     }
 };
 
-const launchJobPaymentById = async (req, res, next) => {
+const performJobPaymentById = async (req, res, next) => {
     
     const { jobId, amountToPay } = req.safeFields;
     const { profile } = req;
     
     try {
-        const hasPaidJob = await jobService.launchJobPaymentById(jobId, profile, amountToPay);
+        const hasPaidJob = await jobService.performJobPaymentById(jobId, profile, amountToPay);
         if(!hasPaidJob) {
             res.status(404).end();
         } else {
@@ -55,5 +55,5 @@ const launchJobPaymentById = async (req, res, next) => {
 module.exports = {
     isValidJobId,
     getUnpaidJobs,
-    launchJobPaymentById
+    performJobPaymentById
 };

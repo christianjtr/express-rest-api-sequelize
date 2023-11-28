@@ -43,11 +43,12 @@ const validateDepositPayload = async (req, res, next) => {
 };
 
 
-const launchDeposit = (req, res, next) => {
+const performClientDeposit = (req, res, next) => {
     try {
 
-        const { userId, amountToDeposit } = req.safeFields;
-        const hasSusccededDeposit = paymentService.processDeposit(userId, amountToDeposit);
+        const { profile } = req;
+        const { amountToDeposit } = req.safeFields;
+        const hasSusccededDeposit = paymentService.processClientDeposit(profile, amountToDeposit);
 
         res.status(200).send({ data: hasSusccededDeposit });
     } catch(error) {
@@ -58,5 +59,5 @@ const launchDeposit = (req, res, next) => {
 module.exports = {
     validatePaymentPayload,
     validateDepositPayload,
-    launchDeposit
+    performClientDeposit
 };

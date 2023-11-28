@@ -1,3 +1,4 @@
+const jobService = require('../services/job.service');
 const profileDataAccessService = require('../dataAccessServices/profile.dataAccess');
 
 const processJobPayment = async (payload) => {
@@ -22,11 +23,28 @@ const processJobPayment = async (payload) => {
     }
 };
 
-const processDeposit = (userId, amountToDeposit) => {
-    return 1;
+const processClientDeposit = async (profile, amountToDeposit) => {
+    try {
+        const unpaidJobs = await jobService.getUnpaidJobs({ profile });
+        const totalAmountToPay = unpaidJobs.map(({ price }) => price).reduce((acc, item) => acc + item, 0);
+
+        const allowDeposit = amountToDeposit <= (totalAmountToPay * 25) / 100;
+
+        if(!allowDeposit) {
+            throw Error(`Deposit Issue: Sorry, you are not allowed to deposit an amount of ${amountToDeposit} in your balance`);
+        }
+
+        const { balance: currentBalance } = await profileDataAccessService.getById(profile.id);
+
+        await profileDataAccessService.updateById(profile.id, { balance: currentBalance + amountToDeposit });
+        return 1;
+    } catch(error) {
+        console.error(`processClientDeposit: Can not process the deposit of ${amountToDeposit} for client ${profile.id}`);
+        throw error;
+    }
 };
 
 module.exports = {
     processJobPayment,
-    processDeposit
+    processClientDeposit
 };

@@ -8,18 +8,18 @@ const updateJobById = async (jobId, payload) => {
 
 const getUnpaidJobs = async (payload) => {
 
-    const { profile } = payload;
+    const { profile, contractStatuses } = payload;
 
     const jobs = await jobDataAccessService.getFiltered({
         ContractorId: profile.id,
         ClientId: profile.id,
         paid: false,
-        contractStatuses: ['in_progress']
+        contractStatuses: contractStatuses || ['in_progress']
     });
     return jobs;
 };
 
-const launchJobPaymentById = async (jobId, profile, amountToPay) => {
+const performJobPaymentById = async (jobId, profile, amountToPay) => {
     try {
         const { balance } = profile;
 
@@ -52,12 +52,12 @@ const launchJobPaymentById = async (jobId, profile, amountToPay) => {
         return hasUpdatedJob;
     }
     catch(error) {
-        console.error('jobPaymentById: Can not process the payment');
+        console.error(`performJobPaymentById: Can not process the payment of ${amountToPay} for job ${jobId}`);
         throw error;
     }
 };
 
 module.exports = {
     getUnpaidJobs,
-    launchJobPaymentById,
+    performJobPaymentById,
 };
