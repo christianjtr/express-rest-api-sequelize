@@ -27,6 +27,36 @@ const getFiltered = async (filters) => {
     return jobs;
 };
 
+const getJobById = async (jobId, options = {}) => {
+    
+    const { includeContract } = options;
+    
+    const job = await Job.findOne({ 
+        where: { 
+            id: jobId 
+        }, 
+        ...(includeContract && { include: { model: Contract } })
+    });
+    
+    return job;
+};
+
+const updateJobById = async (jobId, payload, options = {}) => {
+    
+    const { returning } = options;
+
+    const updatedJob = await Job.update({ ...payload }, {
+        where: {
+            id: jobId
+        },
+        ...(returning && { returning: true })
+    });
+
+    return updatedJob;
+};
+
 module.exports = {
-    getFiltered
+    getFiltered,
+    getJobById,
+    updateJobById
 };
