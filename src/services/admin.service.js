@@ -1,3 +1,4 @@
+const { groupBy, maxBy } = require('lodash');
 const profileDataAccessService = require('../dataAccessServices/profile.dataAccess');
 const jobDataAccessService = require('../dataAccessServices/job.dataAccess');
 
@@ -12,6 +13,31 @@ const mapToBestClientDTO = (paidJobsGroupedByContract, clients) => {
 
     return bestClients;
 };
+
+const mapToBestContractorsDTO = (paidJobsGroupedByContract, contractors) => {
+    
+    const paidJobs = paidJobsGroupedByContract.map((job) => ({ ...job.dataValues }));
+    const bestContractors = contractors.map((contractor) => ({
+        id: contractor.id,
+        fullName: `${contractor.firstName} ${contractor.lastName}`,
+        profession: contractor.profession,
+        paid: paidJobs.filter((job) => contractor.id === job.Contract.ContractorId).reduce((acc, obj) => acc + obj.totalPaid, 0)
+    })).sort((a, b) => b.paid - a.paid);
+
+    return bestContractors;
+};
+
+const extractMostPaidProfession = (bestContractors) => {
+    const professions = Object.entries(groupBy(bestContractors, ({ profession }) => profession))
+        .map(([key, value]) => ({
+            profession: key,
+            paid: value.reduce((acc, item) => acc + item.paid, 0)
+        }));
+
+    const mostPaidProfession = maxBy(professions, ({ paid }) => paid);
+    
+    return mostPaidProfession;
+}
 
 const getBestClients = async (filterCriteria) => {
     try {
@@ -38,6 +64,29 @@ const getBestClients = async (filterCriteria) => {
     }
 };
 
+const getBestProfession = async (filterCriteria) => {
+    
+    const { startDate, endDate } = filterCriteria;
+
+    const paidJobsGroupedByContract = await jobDataAccessService.getAggregationOfJobsPricesByCriteria({
+        paid: true,
+        startDate,
+        endDate
+    }, ['ContractorId'],
+    -1);
+
+    const contractorIds = new Set(paidJobsGroupedByContract.map((jobs) => jobs.Contract.ContractorId));
+
+    const contractors = await profileDataAccessService.getFiltered({ profileIds: Array.from(contractorIds) });
+
+    const bestContractorsDTO = mapToBestContractorsDTO(paidJobsGroupedByContract, contractors);
+
+    const mostPaidProfession = extractMostPaidProfession(bestContractorsDTO);
+
+    return mostPaidProfession;
+};
+
 module.exports = {
-    getBestClients
+    getBestClients,
+    getBestProfession
 };

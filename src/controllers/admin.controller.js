@@ -36,7 +36,19 @@ const getBestClients = async (req, res, next) => {
     }
 };
 
+const getBestProfession = async (req, res, next) => {
+    try {
+        const { start: startDate, end: endDate } = req.safeFields;
+
+        const bestProfession = await adminService.getBestProfession({ startDate, endDate });
+        res.status(200).send({ data: bestProfession });
+    } catch(error) {
+        next(error);
+    }
+};
+
 module.exports = { 
     validateQueryParams, 
-    getBestClients 
+    getBestClients,
+    getBestProfession
 };
