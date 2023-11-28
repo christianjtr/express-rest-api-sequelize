@@ -73,7 +73,7 @@ const getAggregationOfJobsPricesByCriteria = async (filters, groupBy, limit = 2)
         },
         include: {
             model: Contract,
-            attributes: ['ClientId'],
+            attributes: ['ClientId', 'ContractorId'],
         },
         order: [['totalPaid', 'DESC']],
         limit
