@@ -8,12 +8,15 @@
         "express": "4.17.1",
         "lodash": "^4.17.21",
         "sequelize": "^6.23.0",
-        "sqlite3": "^5.0.0"
+        "sqlite3": "^5.0.0",
+        "swagger-autogen": "^2.23.7",
+        "swagger-ui-express": "^5.0.0"
     },
     "scripts": {
         "start": "nodemon ./src/server.js",
         "seed": "node ./scripts/seedDb.js",
-        "lint": "eslint ./src/*.js"
+        "lint": "eslint ./src/*.js",
+        "swagger:autogen": "node ./swagger.js"
     },
     "devDependencies": {
         "concurrently": "^8.0.1",
