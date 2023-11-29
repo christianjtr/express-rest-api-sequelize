@@ -96,3 +96,21 @@ It would be great for example if you'd write some unit test / simple frontend de
 When you have finished the assignment, zip your repo (make sure to include .git folder) and send us the zip.
 
 Thank you and good luck! 🙏
+
+## Solution
+
+> Hi there, Christian speaking here... 😀
+
+Here some comments I would like to add, regarding the solution I just gave it to you.
+
+1. I would encourage the use of *TypeScript* for server-side's JS ecossystem purposes (Is not bullet prof , but it helps to mitigate errors, etc.)
+2. Tried to implement a sort of separation of concerns throughout the project architecture.
+3. Added a sample auto-documentation script for experimental purposes (In this case Swagger.- There are other tools of course).
+4. Added ESLint with some basic rules.
+6. Tools used during the assestment:
+    5.1 VSCode.
+    5.2 Postman.
+    5.3 DB Browser for SQLite.
+6. **Pending:** Unit tests.
+    6.1 I would start by testing the *services* since it's where the *business logic* lies.
+
