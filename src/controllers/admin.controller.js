@@ -45,6 +45,7 @@ const getBestProfession = async (req, res) => {
         const bestProfession = await adminService.getBestProfession({ startDate, endDate });
         if(!bestProfession) {
             res.status(httpStatus.NOT_FOUND).send({ message: 'No best profession has been found' });
+            res.end();
         } else {
             res.status(httpStatus.OK).send({ data: bestProfession });
         }
