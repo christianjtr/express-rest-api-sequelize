@@ -1,3 +1,4 @@
+const httpStatus = require('http-status');
 const Joi = require('@hapi/joi');
 
 const paymentService = require('../services/payment.service');
@@ -23,20 +24,25 @@ const isValidJobId = async (req, res, next) => {
     }
 };
 
-const getUnpaidJobs = async (req, res, next) => {
+const getUnpaidJobs = async (req, res) => {
     
     const { profile } = req;
 
     try {
         const jobs = await jobService.getUnpaidJobs({ profile });
-        if(!jobs) res.status(404).end();
-        res.status(200).send({ data: jobs });
+        if(!jobs) {
+            res.status(httpStatus.NOT_FOUND).end();
+        } else {
+            res.status(httpStatus.OK).send({ data: jobs });
+        }
     } catch (error) {
-        next(new Error(`getUnpaidJobs : Unable to retrieve unpaid jobs for user ${profile.id}`));
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 
-const performJobPaymentById = async (req, res, next) => {
+const performJobPaymentById = async (req, res) => {
     
     const { jobId, amountToPay } = req.safeFields;
     const { profile } = req;
@@ -51,12 +57,14 @@ const performJobPaymentById = async (req, res, next) => {
             });
 
             const hasUpdatedJob = await jobService.updateJobById(jobId, { paid: true, paymentDate: new Date() });
-            if(hasUpdatedJob) res.status(204).end();
+            if(hasUpdatedJob) res.status(httpStatus.NO_CONTENT).end();
         } else {
-            res.status(404).end();
+            res.status(httpStatus.NOT_ACCEPTABLE).end();
         }
     } catch(error) {
-        next(error);
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 

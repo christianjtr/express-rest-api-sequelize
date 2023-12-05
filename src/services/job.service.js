@@ -6,16 +6,23 @@ const updateJobById = async (jobId, payload) => {
 };
 
 const getUnpaidJobs = async (payload) => {
-
+    
     const { profile, contractStatuses } = payload;
-
-    const jobs = await jobDataAccessService.getFiltered({
-        ContractorId: profile.id,
-        ClientId: profile.id,
-        paid: false,
-        contractStatuses: contractStatuses || ['in_progress']
-    });
-    return jobs;
+    
+    try {
+        
+        const jobs = await jobDataAccessService.getFiltered({
+            ContractorId: profile.id,
+            ClientId: profile.id,
+            paid: false,
+            contractStatuses: contractStatuses || ['in_progress']
+        });
+        return jobs;
+    } catch(error) {
+        console.error(`getUnpaidJobs : Unable to retrieve unpaid jobs for user ${profile.id}`);
+        throw error;
+    }
+    
 };
 
 const performJobPaymentById = async (jobId, profile, amountToPay) => {
