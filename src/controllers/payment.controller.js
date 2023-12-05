@@ -1,3 +1,4 @@
+const httpStatus = require('http-status');
 const Joi = require('@hapi/joi');
 
 const paymentService = require('../services/payment.service');
@@ -43,19 +44,24 @@ const validateDepositPayload = async (req, res, next) => {
 };
 
 
-const performClientDeposit = (req, res, next) => {
+const performClientDeposit = (req, res) => {
     try {
 
         const { profile } = req;
         const { amountToDeposit } = req.safeFields;
         const hasSusccededDeposit = paymentService.processClientDeposit(profile, amountToDeposit);
         if(!hasSusccededDeposit) {
-            res.status(404).end();
+            res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .send(`Can not process the deposit of ${amountToDeposit} for client ${profile.id}`);
+            res.end();
         } else {
-            res.status(204).end();
+            res.status(httpStatus.NO_CONTENT).end();
         }
     } catch(error) {
-        next(error);
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 
