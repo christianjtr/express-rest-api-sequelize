@@ -1,3 +1,4 @@
+const httpStatus = require('http-status');
 const Joi = require('@hapi/joi');
 
 const adminService = require('../services/admin.service');
@@ -22,28 +23,35 @@ const validateQueryParams = async (req, res, next) => {
         next();
     } catch (error) {
         next(error);
-        
     }};
 
-const getBestClients = async (req, res, next) => {
+const getBestClients = async (req, res) => {
     try {
         const { start: startDate, end: endDate, limit } = req.safeFields;
 
         const bestClients = await adminService.getBestClients({ startDate, endDate, limit });
-        res.status(200).send({ data: bestClients });
+        res.status(httpStatus.OK).send({ data: bestClients });
     } catch(error) {
-        next(error);
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 
-const getBestProfession = async (req, res, next) => {
+const getBestProfession = async (req, res) => {
     try {
         const { start: startDate, end: endDate } = req.safeFields;
 
         const bestProfession = await adminService.getBestProfession({ startDate, endDate });
-        res.status(200).send({ data: bestProfession });
+        if(!bestProfession) {
+            res.status(httpStatus.NOT_FOUND).send({ message: 'No best profession has been found' });
+        } else {
+            res.status(httpStatus.OK).send({ data: bestProfession });
+        }
     } catch(error) {
-        next(error);
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 

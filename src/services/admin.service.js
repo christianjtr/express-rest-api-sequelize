@@ -37,7 +37,7 @@ const extractMostPaidProfession = (bestContractors) => {
     const mostPaidProfession = maxBy(professions, ({ paid }) => paid);
     
     return mostPaidProfession;
-}
+};
 
 const getBestClients = async (filterCriteria) => {
     try {
@@ -66,24 +66,30 @@ const getBestClients = async (filterCriteria) => {
 
 const getBestProfession = async (filterCriteria) => {
     
-    const { startDate, endDate } = filterCriteria;
+    try {
 
-    const paidJobsGroupedByContract = await jobDataAccessService.getAggregationOfJobsPricesByCriteria({
-        paid: true,
-        startDate,
-        endDate
-    }, ['ContractorId'],
-    -1);
+        const { startDate, endDate } = filterCriteria;
 
-    const contractorIds = new Set(paidJobsGroupedByContract.map((jobs) => jobs.Contract.ContractorId));
+        const paidJobsGroupedByContract = await jobDataAccessService.getAggregationOfJobsPricesByCriteria({
+            paid: true,
+            startDate,
+            endDate
+        }, ['ContractorId'],
+        -1);
 
-    const contractors = await profileDataAccessService.getFiltered({ profileIds: Array.from(contractorIds) });
+        const contractorIds = new Set(paidJobsGroupedByContract.map((jobs) => jobs.Contract.ContractorId));
 
-    const bestContractorsDTO = mapToBestContractorsDTO(paidJobsGroupedByContract, contractors);
+        const contractors = await profileDataAccessService.getFiltered({ profileIds: Array.from(contractorIds) });
 
-    const mostPaidProfession = extractMostPaidProfession(bestContractorsDTO);
+        const bestContractorsDTO = mapToBestContractorsDTO(paidJobsGroupedByContract, contractors);
 
-    return mostPaidProfession;
+        const mostPaidProfession = extractMostPaidProfession(bestContractorsDTO);
+
+        return mostPaidProfession;
+    } catch(error) {
+        console.error('getBestProfession: Can not get best profession');
+        throw error;
+    }
 };
 
 module.exports = {
