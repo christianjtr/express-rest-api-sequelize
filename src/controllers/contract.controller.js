@@ -1,3 +1,4 @@
+const httpStatus = require('http-status');
 const Joi = require('@hapi/joi');
 
 const contractService = require('../services/contract.service');
@@ -18,33 +19,40 @@ const isValidContractId = async (req, res, next) => {
         next();
     } catch (error) {
         next(error);
-        
     }
 };
 
-const getAllContracts = async (req, res, next) => {
+const getAllContracts = async (req, res) => {
     try {
 
         const { profile } = req;
 
         const contracts = await contractService.getAllContracts({ profile });
-        res.status(200).send({ data: contracts });
+        res.status(httpStatus.OK).send({ data: contracts });
     } catch (error) {
-        next(new Error('getAllContracts : Unable to retrieve contracts'));
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 
-const getContractById = async (req, res, next) => {
+const getContractById = async (req, res) => {
     
     const { id } = req.safeFields;
     const { profile } = req;
 
     try {
         const contract = await contractService.getContractById(id, { profile });
-        if(!contract) res.status(404).end();
-        res.status(200).send({ data: contract });
+        if(!contract) {
+            res.status(httpStatus.NOT_FOUND).send({ message: `No contract has been found given Id ${id}` });
+            res.end();
+        } else {
+            res.status(httpStatus.OK).send({ data: contract });
+        }
     } catch (error) {
-        next(new Error(`getContractById : Unable to retrieve contract given id ${id}`));
+        res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: error.message });
     }
 };
 
