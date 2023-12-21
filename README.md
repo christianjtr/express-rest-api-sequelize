@@ -1,4 +1,15 @@
-# DEEL BACKEND TASK
+> 💡 It's just another conceptual test
+
+## My next steps
+
+Here are my suggestions...
+
+1. I would encourage the use of *TypeScript*.
+2. Enhance the separation of concerns throughout the project architecture.
+3. Swagger: Complete API documentation auto-documentation.
+4. Add unit tests.
+
+## DEEL BACKEND TASK
 
 💫 Welcome! 🎉
 
@@ -96,11 +107,3 @@ It would be great for example if you'd write some unit test / simple frontend de
 When you have finished the assignment, zip your repo (make sure to include .git folder) and send us the zip.
 
 Thank you and good luck! 🙏
-
-## Next steps
-
-1. I would encourage the use of *TypeScript*.
-2. Enhance the separation of concerns throughout the project architecture.
-3. Swagger: Complete api documentation auto-documentation.
-4. Add unit tests.
-
