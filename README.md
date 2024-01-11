@@ -8,6 +8,9 @@ Here are my suggestions...
 2. Enhance the separation of concerns throughout the project architecture.
 3. Swagger: Complete API documentation auto-documentation.
 4. Add unit tests.
+5. Concurrency (Performing multiple operations against DB while executing others - Transactions).
+
+## Here comes the assessment criteria ⬇️⬇️⬇️ 
 
 ## DEEL BACKEND TASK
 
